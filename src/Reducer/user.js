@@ -13,6 +13,9 @@ const initialState = {
   loadMyInfoLoading: false,
   loadMyInfoDone: false,
   loadMyInfoError: null,
+  nameModifyLoading: false,
+  nameModifyDone: false,
+  nameModifyError: false,
 }
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
@@ -26,6 +29,10 @@ export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
 export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
 export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+
+export const NAME_MODIFY_REQUEST = 'NAME_MODIFY_REQUEST';
+export const NAME_MODIFY_SUCCESS = 'NAME_MODIFY_SUCCESS';
+export const NAME_MODIFY_FAILURE = 'NAME_MODIFY_FAILURE';
 
 export const loginAction = (data) => ({
   type: LOG_IN_REQUEST,
@@ -65,6 +72,30 @@ const reducer = (state = initialState, action) => {
         ...state,
         loginLoading: false,
         loginError: action.error,
+      }
+    case NAME_MODIFY_REQUEST:
+      return {
+        ...state,
+        nameModifyLoading: true,
+        nameModifyDone: false,
+        nameModifyError: null,
+      }
+    case NAME_MODIFY_SUCCESS:
+      console.log(action.data);
+      return {
+        ...state,
+        nameModifyLoading: false,
+        nameModifyDone: true,
+        user: {
+          ...state.user,
+          nickname: action.data,
+        },
+      }
+    case NAME_MODIFY_FAILURE:
+      return {
+        ...state,
+        nameModifyLoading: false,
+        nameModifyError: action.error,
       }
     case LOAD_MY_INFO_REQUEST:
       return {

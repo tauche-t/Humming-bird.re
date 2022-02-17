@@ -60,6 +60,10 @@ const GlobelStyle = createGlobalStyle`
     font-weight: normal;
     font-style: normal;
   }
+
+  img {
+    width: 100%;
+  }
 `;
 
 ReactDOM.render(

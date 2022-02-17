@@ -1,5 +1,10 @@
 import styled from "styled-components";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from "react";
+import { useState } from "react";
+import { NAME_MODIFY_REQUEST } from "../Reducer/user";
+import { useEffect } from "react";
+import { BsFillArrowRightCircleFill } from 'react-icons/bs';
 
 const UserProfileWrap = styled.div`
   width: 100%;
@@ -86,6 +91,20 @@ const UserTitle = styled.div`
   }
 `;
 
+const Form = styled.form`
+  position: relative;
+  width: 140px;
+  margin: 0 auto;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  border: 1px solid #adb5bd;
+  border-radius: 25px;
+  padding: 3px 10px;
+  box-sizing: border-box;
+`;
+
 const ProfileCorrection = styled.button`
   display: block;
   width: 75px;
@@ -97,9 +116,7 @@ const ProfileCorrection = styled.button`
   border-radius: 10px;
   font-size: 10px;
   margin-top: 10px;
-  a {
-    color: #c8c7c7;
-  }
+  cursor: pointer;
 `;
 
 const UserInfo = styled.div`
@@ -135,8 +152,50 @@ const UserInfo = styled.div`
   }
 `;
 
+const ModifyButton = styled.button`
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 21px;
+  position: absolute;
+  right: -5px;
+  top: 0px;
+  color: #a5d8ff;
+  cursor: pointer;
+`;
+
 const Profile = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
+  const { nameModifyDone } = useSelector((state) => state.user);
+
+  const [modify, setModify] = useState(false);
+  const [changeName, setChangeName] = useState("");
+
+  const onClickModify = useCallback(() => {
+    setModify(prev => !prev);
+  }, [modify]);
+
+  const onChangeName = useCallback((e) => {
+    setChangeName(e.target.value);
+  }, [changeName]);
+
+  const onSubmitName = useCallback((e) => {
+    e.preventDefault();
+
+    dispatch({
+      type: NAME_MODIFY_REQUEST,
+      data: changeName,
+    });
+
+    setModify(false);
+  }, [changeName]);
+
+  useEffect(() => {
+    if(nameModifyDone) {
+      setChangeName("");
+    }
+  }, [nameModifyDone]);
 
   return (
     <UserProfileWrap>
@@ -148,11 +207,18 @@ const Profile = () => {
 
     <div className="userText">
       <UserTitle>
-        <h2>{user.nickname}</h2>
+        { modify ? (
+          <Form onSubmit={onSubmitName}>
+            <Input type="text" value={changeName} onChange={onChangeName} placeholder={user.nickname} />
+            <ModifyButton type="submit"><BsFillArrowRightCircleFill /></ModifyButton>
+          </Form>
+        ) : (
+          <h2>{user.nickname}</h2>
+        ) }
         <p>@profile1</p>
       </UserTitle>
 
-      <ProfileCorrection>프로필 수정</ProfileCorrection>
+      <ProfileCorrection type="button" onClick={onClickModify}>{ modify ? "취소" : "프로필 수정" }</ProfileCorrection>
     </div>
 
     <UserInfo>

@@ -6,6 +6,7 @@ import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineDelete } from '
 import PostProfile from "./PostProfile";
 import CommentForm from "./CommentForm";
 import Comments from "./Comments";
+// import PostImages from "./PostImages";
 
 const PostWrap = styled.div`
   margin-bottom: 20px;
@@ -71,6 +72,9 @@ const PostCard = ({ post }) => {
   return (
     <PostWrap>
       <Card>
+
+        {/* {post.Images[0] && <PostImages images={post.Images} />} */}
+
         <ButtonSection>
           <button onClick={onClickLiked} className="likedButton" >
             { liked ? <AiFillHeart style={{ color: '#fac7c7' }} /> : <AiOutlineHeart />}

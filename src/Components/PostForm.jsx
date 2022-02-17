@@ -55,6 +55,8 @@ const PostForm = () => {
   const { addPostDone } = useSelector((state) => state.post);
   const { user } = useSelector(state => state.user);
 
+  const [fileImage, setFileImage] = useState("");
+
   useEffect(() => {
     if(addPostDone) {
       setText("");
@@ -71,16 +73,19 @@ const PostForm = () => {
     dispatch(addPost({ text: text, userId: user.id, nickname: user.nickname }));
   }, [text]);
 
-  const onClickImageUpLoad = useCallback(() => {
-    imageInput.current.click();
-  }, [imageInput.current]);
+  // const onClickImageUpLoad = useCallback((e) => {
+  //   e.preventDefault();
+
+  //   imageInput.current.click();
+  // }, [imageInput.current]);
+
 
   return (
     <Form onSubmit={onSubmit}>
       <textarea value={text} onChange={onChangeText} maxLength={140} placeholder="당신의 이야기를 적어주세요"></textarea>
       <div className="buttonWrap">
-        <input type="file" multiple hidden ref={imageInput} />
-        <Button onClick={onClickImageUpLoad} className="imgUpload">이미지 업로드</Button>
+        {/* <input type="file" accept='image/*' name="file" multiple hidden ref={imageInput} /> */}
+        {/* <Button onClick={onClickImageUpLoad} className="imgUpload" type="button">이미지 업로드</Button> */}
         <Button type="submit" className="rightButton">게시</Button>
       </div>
       {/* <div>
