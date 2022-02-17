@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { addPost } from "../Reducer/post";
-import { Button } from "./AppLayout";
 
 const Form = styled.form`
   margin-top: 20px;
@@ -14,6 +13,9 @@ const Form = styled.form`
     border: 1px solid #e1dddd;
     padding: 5px 10px;
     box-sizing: border-box;
+    height: 55px;
+    border-radius: 3px;
+    resize: none;
 
     &::placeholder {
       color: #e1dddd;
@@ -44,6 +46,24 @@ const Form = styled.form`
     .rightButton {
       float: right;
     }
+  }
+`;
+
+const WriteButton = styled.button`
+  width: auto;
+  height: auto;
+  padding: 5px 11px;
+  border: 1px solid #a5d8ff;
+  color: #a5d8ff;
+  background: #fff;
+  border-radius: 5px;
+  margin-right: 1px;
+  cursor: pointer;
+
+  &:hover {
+    background: #a5d8ff;
+    color: #fff;
+    transition: all 0.5s;
   }
 `;
 
@@ -86,7 +106,7 @@ const PostForm = () => {
       <div className="buttonWrap">
         {/* <input type="file" accept='image/*' name="file" multiple hidden ref={imageInput} /> */}
         {/* <Button onClick={onClickImageUpLoad} className="imgUpload" type="button">이미지 업로드</Button> */}
-        <Button type="submit" className="rightButton">게시</Button>
+        <WriteButton type="submit" className="rightButton">게시</WriteButton>
       </div>
       {/* <div>
         {imagePaths.map((v) => (

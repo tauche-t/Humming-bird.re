@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useMediaQuery } from "react-responsive";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../Components/AppLayout";
@@ -29,6 +30,7 @@ const LoginBox = styled.div`
   /* max-width: 1320px; */
   /* height: 710px; */
   /* margin: 0 auto; */
+  border-radius: 15px;
   @media screen and (min-width: 1025px) and (max-width: 1320px) {
     width: 1024px;
   }
@@ -44,6 +46,8 @@ const LoginBox = styled.div`
     justify-content: center;
     align-items: center;
     background: #ffa8a8;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
     h1 {
       font-size: 60px;
       font-family: 'SF_HambakSnow';
@@ -111,6 +115,7 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const isTabletOrMobile = useMediaQuery({ maxWidth: 1024 })
 
   const { parsedUser } = useSelector(state => state.user);
 
@@ -140,23 +145,23 @@ const LoginForm = () => {
   return (
     <BackgroundWrapper>
       <LoginBox>
-      <div className="left-logo">
-          <h1>허밍버드</h1>
-        </div>
+        {isTabletOrMobile ? null : (
+          <div className="left-logo">
+            <h1>허밍버드</h1>
+          </div>
+        )}
         <div className="right-login-form">
           <h2>Log In</h2>
           <form onSubmit={onSubmit}>
             <div>
-              <label htmlFor="email">이메일</label>
-              <Input name="email" value={email} onChange={onChange}  />
+              <Input name="email" value={email} onChange={onChange} placeholder="이메일" />
             </div>
             <div>
-              <label htmlFor="password">비밀번호</label>
-              <Input name="password" value={password} onChange={onChange}  />
+              <Input name="password" value={password} onChange={onChange} placeholder="비밀번호" />
             </div>
             <div>
               <Button type="submit" className="logInButton">로그인</Button>
-              <Link to="/signUp">회원가입</Link>
+              <Link to="/signUp" style={{ display: "block", textAlign: "center", marginTop: "20px" }}>회원가입</Link>
             </div>
           </form>
         </div>

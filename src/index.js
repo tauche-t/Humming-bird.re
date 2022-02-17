@@ -52,6 +52,10 @@ const GlobelStyle = createGlobalStyle`
   a {
     color: #54a8ff;
     text-decoration: none;
+
+    @media screen and (min-width: 981px) and (max-width: 1320px) {
+      font-size: 14px;
+    }
   }
 
   @font-face {
@@ -62,7 +66,16 @@ const GlobelStyle = createGlobalStyle`
   }
 
   img {
-    width: 100%;
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  svg {
+    @media screen and (min-width: 981px) and (max-width: 1320px) {
+      font-size: 20px;
+    }
   }
 `;
 

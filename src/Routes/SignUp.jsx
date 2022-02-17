@@ -18,22 +18,40 @@ const SignUpWrapper = styled.div`
 `;
 
 const FormBox = styled.div`
-  width: 40.22%;
-  height: 0;
+  width: 770px;
+  height: 800px;
   margin: 0 auto;
   background: #fff;
-  padding-top: 43%;
   position: relative;
   border-radius: 10px;
   /* width: 680px; */
   /* height: 710px; */
+
+  @media screen and (min-width: 1025px) and (max-width: 1240px) {
+    width: 650px;
+    height: 740px;
+  }
+
+  @media screen and (max-width: 1024px) {
+    width: 80%;
+  }
+
   .formWrap {
-    width: 63%;
+    width: 485px;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+
+    @media screen and (min-width: 1025px) and (max-width: 1240px) {
+      width: 320px;
+    }
+
+    @media screen and (max-width: 1024px) {
+      width: 80%;
+    }
+
     h1 {
       font-size: 48px;
       color: #ffe3e3;
@@ -97,16 +115,13 @@ const SignUp = () => {
           <h1>Sign Up</h1>
           <form onSubmit={onSubmit}>
             <div>
-              <label htmlFor="email">이메일</label>
-              <Input name="email" value={email} onChange={onChangeEmail}  />
+              <Input name="email" value={email} onChange={onChangeEmail} placeholder="이메일" />
             </div>
             <div>
-              <label htmlFor="nickname">닉네임</label>
-              <Input name="nickname" value={nickname} onChange={onChangeNickname}  />
+              <Input name="nickname" value={nickname} onChange={onChangeNickname} placeholder="닉네임" />
             </div>
             <div>
-              <label htmlFor="password">비밀번호</label>
-              <Input type="password" name="password" value={password} onChange={onChangePassword}  />
+              <Input type="password" name="password" value={password} onChange={onChangePassword} placeholder="비밀번호" />
             </div>
             <div className="passwordConfirm">
               <Input name="sign-passwordConfirm" type="password" value={passwordConfirm} onChange={onChagnePasswordConfirm} required placeholder="비밀번호 확인" />
@@ -114,7 +129,7 @@ const SignUp = () => {
             </div>
             <div>
               <Button type="submit" className="logInButton">회원가입</Button>
-              <Link to="/login">취소</Link>
+              <Link to="/login" style={{ display: "block", marginTop: "20px" }}>취소</Link>
             </div>
           </form>
         </div>

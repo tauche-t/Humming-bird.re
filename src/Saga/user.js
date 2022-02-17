@@ -1,5 +1,5 @@
 import { all, delay, fork, put, take, takeLatest } from 'redux-saga/effects';
-import { LOAD_MY_INFO_FAILURE, LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, NAME_MODIFY_FAILURE, NAME_MODIFY_REQUEST, NAME_MODIFY_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../Reducer/user";
+import { LOAD_MY_INFO_FAILURE, LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, NAME_MODIFY_FAILURE, NAME_MODIFY_REQUEST, NAME_MODIFY_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../Reducer/user";
 
 function* signUp(action) {
   try {
@@ -37,6 +37,24 @@ function* logIn(action) {
 
 function* watchLogin() {
   yield takeLatest(LOG_IN_REQUEST, logIn);
+}
+
+function* logOut(action) {
+  try {
+    yield delay(1000);
+    yield put({
+      type: LOG_OUT_SUCCESS,
+    });
+  } catch (error) {
+    yield put({
+      type: LOG_OUT_FAILURE,
+      data: error.response.data,
+    });
+  }
+}
+
+function* watchLogout() {
+  yield takeLatest(LOG_OUT_REQUEST, logOut);
 }
 
 function* loadInfo(action) {
@@ -81,6 +99,7 @@ function* watchModifyName() {
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
+    fork(watchLogout),
     fork(watchSignup),
     fork(watchLoadInfo),
     fork(watchModifyName),

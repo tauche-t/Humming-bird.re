@@ -37,14 +37,18 @@ const Home = () => {
   const { loadPostLoading } = useSelector((state) => state.post);
   const { user } = useSelector((state) => state.user);
 
+  const loadMe = JSON.parse(localStorage.getItem("me"));
+
   useEffect(() => {
     dispatch({
       type: LOAD_POST_REQUEST,
     });
 
-    dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
+    if(loadMe) {
+      dispatch({
+        type: LOAD_MY_INFO_REQUEST,
+      });
+    }
   }, []);
 
   useEffect(() => {

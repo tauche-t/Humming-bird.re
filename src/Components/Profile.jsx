@@ -183,6 +183,8 @@ const Profile = () => {
   const onSubmitName = useCallback((e) => {
     e.preventDefault();
 
+    if(!changeName) return;
+
     dispatch({
       type: NAME_MODIFY_REQUEST,
       data: changeName,

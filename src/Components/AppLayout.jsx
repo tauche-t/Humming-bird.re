@@ -6,7 +6,9 @@ import Row from './grid/Row';
 import styled from "styled-components";
 import Profile from "./Profile";
 import PostForm from "./PostForm";
-
+import { LOG_OUT_REQUEST } from "../Reducer/user";
+import { AiOutlineClose } from 'react-icons/ai';
+import { useMediaQuery } from 'react-responsive';
 
 const Wrapper = styled.div`
   max-width: 1320px;
@@ -111,38 +113,70 @@ const WriteWrap = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 20;
 `;
 
 const PostBox = styled.div`
   width: 800px;
-  height: 300px;
-  padding: 100px;
+  height: 230px;
+  padding: 55px 100px;
   background: #fff;
   box-sizing: border-box;
   border-radius: 10px;
+  position: relative;
+  z-index: 100;
+`;
+
+const CloseBtn = styled.button`
+  background: none;
+  border: none;
+  outline: none;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 20px;
+  cursor: pointer;
 `;
 
 const AppLayout = ({ children }) => {
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { addPostDone } = useSelector((state) => state.post);
   const [write, setWrite] = useState(false);
 
+  const isTabletOrMobile = useMediaQuery({ maxWidth: 1024 })
+
   const onClickWrite = useCallback(() => {
-    setWrite(true);
-  }, [write]);
+    if(user) {
+      setWrite(true);
+    }
+  }, [write, user]);
+
+  const onClickClose = useCallback(() => {
+    setWrite(false);
+  }, []);
 
   useEffect(() => {
     if(addPostDone) {
       setWrite(false);
     }
   }, [addPostDone]);
+
+  const onClickLogOut = useCallback(() => {
+    dispatch({
+      type: LOG_OUT_REQUEST,
+    });
+  }, []);
+
+  const stopPropagation = useCallback((e) => {
+    e.stopPropagation();
+  }, []);
 
   return(
     <>
@@ -155,7 +189,7 @@ const AppLayout = ({ children }) => {
                   <Link to="/" className="logo">허밍버드</Link>
                 </li>
               </Menu>
-              {user ? <Button className="logOut">로그아웃</Button> : (
+              {user ? <Button className="logOut" onClick={onClickLogOut}>로그아웃</Button> : (
                 <Button className="logIn">
                   <Link to="/login">로그인</Link>
                 </Button>
@@ -164,16 +198,19 @@ const AppLayout = ({ children }) => {
             </div>
           </Col>
           <Col xs={12} md={6}>{ children }</Col>
-          <Col xs={12} md={3}>
-            {user ? <Profile /> : null}
-          </Col>
+          { isTabletOrMobile ? null : (
+            <Col xs={12} md={3}>
+              {user ? <Profile /> : null}
+            </Col>
+          )}
         </Row>
       </Wrapper>
 
       { write ? (
         <>
-          <WriteWrap>
-            <PostBox>
+          <WriteWrap onClick={onClickClose}>
+            <PostBox onClick={stopPropagation}>
+              <CloseBtn type="button" onClick={onClickClose}><AiOutlineClose /></CloseBtn>
               <PostForm />
             </PostBox>
           </WriteWrap>
