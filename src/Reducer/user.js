@@ -1,15 +1,31 @@
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "./post";
+import shortid from "shortid";
+import { ADD_COMMENT_TO_ME, ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "./post";
 
 const initialState = {
   loginLoading: false,
   loginDone: false,
   loginError: null,
   user: null,
+  signUpLoading: false,
+  signUpDone: false,
+  signUpError: null,
+  parsedUser: [],
+  loadMyInfoLoading: false,
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
 }
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
+
+export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
+
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const loginAction = (data) => ({
   type: LOG_IN_REQUEST,
@@ -18,8 +34,8 @@ export const loginAction = (data) => ({
 
 const dummyUser = (data) => ({
   ...data,
-  nickname: '사용자',
-  id: 1,
+  nickname: data.nickname,
+  id: shortid.generate(),
   Liked: [],
   Posts: [],
   Comments: [],
@@ -35,11 +51,14 @@ const reducer = (state = initialState, action) => {
         loginError: null,
       }
     case LOG_IN_SUCCESS:
+      localStorage.setItem("me", JSON.stringify(dummyUser(action.data)));
+      const savedMe = localStorage.getItem("me");
+      const parsedMe = JSON.parse(savedMe);
       return {
         ...state,
         loginLoading: false,
         loginDone: true,
-        user: dummyUser(action.data),
+        user: parsedMe,
       }
     case LOG_IN_FAILURE:
       return {
@@ -47,22 +66,75 @@ const reducer = (state = initialState, action) => {
         loginLoading: false,
         loginError: action.error,
       }
-    // case ADD_POST_TO_ME:
-    //   return {
-    //     ...state,
-    //     user: {
-    //       ...state.user,
-    //       Posts: [{ id: action.data }, ...state.user.Posts],
-    //     }
-    //   }
-    // case REMOVE_POST_OF_ME:
-    //   return {
-    //     ...state,
-    //     user: {
-    //       ...state.user,
-    //       Posts: state.user.Posts.filter((v) => v.id !== action.data),
-    //     }
-    //   }
+    case LOAD_MY_INFO_REQUEST:
+      return {
+        ...state,
+        loadMyInfoLoading: true,
+        loadMyInfoDone: false,
+        loadMyInfoError: null,
+      }
+    case LOAD_MY_INFO_SUCCESS:
+      const loadMe = JSON.parse(localStorage.getItem("me"));
+      return {
+        ...state,
+        loadMyInfoLoading: false,
+        loadMyInfoDone: true,
+        user: loadMe,
+      }
+    case LOAD_MY_INFO_FAILURE:
+      return {
+        ...state,
+        loadMyInfoLoading: false,
+        loadMyInfoError: action.error,
+      }
+    case SIGN_UP_REQUEST:
+      return {
+        ...state,
+        signUpLoading: true,
+        signUpDone: false,
+        signUpError: null,
+      }
+    case SIGN_UP_SUCCESS:
+      const signUpUser = [action.data, ...state.parsedUser];
+      localStorage.setItem("signUpUser", JSON.stringify(signUpUser));
+      const savedUser = localStorage.getItem("signUpUser");
+      const parsedUser = JSON.parse(savedUser);
+      return {
+        ...state,
+        signUpLoading: false,
+        signUpDone: true,
+        parsedUser,
+      }
+    case SIGN_UP_FAILURE:
+      return {
+        ...state,
+        signUpLoading: false,
+        signUpError: action.error,
+      }
+    case ADD_POST_TO_ME:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          Posts: [{ id: action.data }, ...state.user.Posts],
+        }
+      }
+    case REMOVE_POST_OF_ME:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          Posts: state.user.Posts.filter((v) => v.id !== action.data),
+        }
+      }
+    case ADD_COMMENT_TO_ME:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          Comments: [{ id: action.data }, ...state.user.Comments],
+        }
+      }
     default:
       return state;
   }

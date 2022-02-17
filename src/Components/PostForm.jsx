@@ -53,6 +53,7 @@ const PostForm = () => {
   const [text, setText] = useState("");
   const { imagePaths } = useSelector((state) => state.post);
   const { addPostDone } = useSelector((state) => state.post);
+  const { user } = useSelector(state => state.user);
 
   useEffect(() => {
     if(addPostDone) {
@@ -67,7 +68,7 @@ const PostForm = () => {
   const onSubmit = useCallback((e) => {
     e.preventDefault();
 
-    dispatch(addPost(text));
+    dispatch(addPost({ text: text, userId: user.id, nickname: user.nickname }));
   }, [text]);
 
   const onClickImageUpLoad = useCallback(() => {

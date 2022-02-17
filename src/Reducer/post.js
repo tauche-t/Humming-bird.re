@@ -41,6 +41,14 @@ export const initialState = {
   removePostLoading: false,
   removePostDone: false,
   removePostError: null,
+  addCommentLoading: false,
+  addCommentDone: false,
+  addCommentError: null,
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
+  hasMorePost: true,
+  savePosts: [],
 }
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
@@ -54,6 +62,16 @@ export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+
+export const ADD_COMMENT_TO_ME = 'ADD_COMMENT_TO_ME';
+
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
+
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
   data,
@@ -63,33 +81,43 @@ const dummyPost = (data) => ({
   id: data.id,
   content: data.content,
   User: {
-    id: 1,
-    nickname: '사용자',
+    id: data.userId,
+    nickname: data.userNick,
   },
   Images: [],
   Comments: [],
 });
 
-initialState.mainPosts = initialState.mainPosts.concat(
-  Array(20).fill().map((v, i) => ({
+const dummyComment = (data) => ({
+  id: shortid.generate(),
+  content: data,
+  User: {
+    id: 1,
+    nickname: '사용자',
+  },
+});
+
+
+
+export const generateDummyPost = (number) => Array(number).fill().map((v, i) => ({
+  id: shortid.generate(),
+  User: {
     id: shortid.generate(),
+    nickname: faker.name.findName(),
+  },
+  content: faker.lorem.paragraph(),
+  Images: [{
+    src: faker.image.image(),
+  }],
+  Comments: [{
     User: {
       id: shortid.generate(),
       nickname: faker.name.findName(),
     },
-    content: faker.lorem.paragraph(),
-    Images: [{
-      src: faker.image.image(),
-    }],
-    Comments: [{
-      User: {
-        id: shortid.generate(),
-        nickname: faker.name.findName(),
-      },
-      content: faker.lorem.sentences(),
-    }]
-  }))
-);
+    content: faker.lorem.sentences(),
+  }]
+}));
+
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -100,13 +128,19 @@ const reducer = (state = initialState, action) => {
         addPostDone: false,
         addPostError: null,
       }
-    case ADD_POST_SUCCESS:
+    case ADD_POST_SUCCESS: 
+      const posts = [dummyPost(action.data), ...state.mainPosts];
+      localStorage.setItem("post", JSON.stringify(posts));
+      const getPosts = localStorage.getItem("post");
+      const paresPosts = JSON.parse(getPosts);
+      // const savedPosts = paresPosts.concat([dummyPost(action.data), ...state.mainPosts])
       return {
         ...state,
         addPostLoading: false,
         addPostDone: true,
-        mainPosts: [dummyPost(action.data), ...state.mainPosts],
+        mainPosts: paresPosts,
       }
+    
     case ADD_POST_FAILURE:
       return {
         ...state,
@@ -132,6 +166,60 @@ const reducer = (state = initialState, action) => {
         ...state,
         removePostLoading: false,
         removePostError: action.error,
+      }
+    case ADD_COMMENT_REQUEST:
+      return {
+        ...state,
+        addCommentLoading: true,
+        addCommentDone: false,
+        addCommentError: null,
+      }
+    case ADD_COMMENT_SUCCESS:{
+      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
+      const post = { ...state.mainPosts[postIndex] };
+      post.Comments = [dummyComment(action.data.content), ...post.Comments];
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = post;
+
+      return {
+        ...state,
+        mainPosts,
+        addCommentLoading: false,
+        addCommentDone: true,
+      } 
+    }
+    case ADD_COMMENT_FAILURE:
+      return {
+        ...state,
+        addCommentLoading: false,
+        addCommentError: action.error,
+      }
+    case LOAD_POST_REQUEST: {
+      return {
+        ...state,
+        loadPostLoading: true,
+        loadPostDone: false,
+        loadPostError: null,
+      }
+    }
+    case LOAD_POST_SUCCESS:
+      // localStorage.setItem("post", JSON.stringify(paresPosts));
+      const savedLoadPosts = localStorage.getItem("post");
+      const paresLoadPosts = JSON.parse(savedLoadPosts) || [];
+      return {
+        ...state,
+        loadPostLoading: false,
+        loadPostDone: true,
+        // mainPosts: state.mainPosts.concat(action.data),
+        mainPosts: paresLoadPosts.concat(action.data),
+        hasMorePost: state.mainPosts.length < 50,
+      }
+    
+    case LOAD_POST_FAILURE:
+      return {
+        ...state,
+        loadPostLoading: false,
+        loadPostError: action.error,
       }
     default:
       return state;

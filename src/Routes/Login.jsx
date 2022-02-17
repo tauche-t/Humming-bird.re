@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../Components/AppLayout";
@@ -21,13 +21,22 @@ const BackgroundWrapper = styled.div`
 
 const LoginBox = styled.div`
   display: flex;
-  width: 68.75%;
-  height: 70.95%;
+  width: 1320px;
+  height: 710px;
+  /* width: 68.75%;
+  height: 70.95%; */
   background: #fff;
   /* max-width: 1320px; */
   /* height: 710px; */
   /* margin: 0 auto; */
-
+  @media screen and (min-width: 1025px) and (max-width: 1320px) {
+    width: 1024px;
+  }
+  @media screen and (max-width: 1024px) {
+    display: block;
+    width: 100%;
+    max-width: 650px;
+  }
   .left-logo {
     width: 50%;
     height: 100%;
@@ -35,14 +44,12 @@ const LoginBox = styled.div`
     justify-content: center;
     align-items: center;
     background: #ffa8a8;
-
     h1 {
       font-size: 60px;
       font-family: 'SF_HambakSnow';
       color: #fff;
     }
   }
-
   .right-login-form {
     width: 50%;
     display: flex;
@@ -51,16 +58,18 @@ const LoginBox = styled.div`
     padding: 10%;
     box-sizing: border-box;
     /* align-items: center; */
-
+    @media screen and (max-width: 1024px) {
+      display: block;
+      padding: 28% 20%;
+      width: 100%;
+    }
     form {
       div {
         margin-bottom: 25px;
       }
-
       .buttonGruop {
         padding-top: 10px;
         text-align: center;
-
         a {
           display: block;
           text-decoration: none;
@@ -70,7 +79,6 @@ const LoginBox = styled.div`
         }
       }
     }
-
     h2 {
       text-align: center;
       font-size: 43px;
@@ -104,6 +112,8 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { parsedUser } = useSelector(state => state.user);
+
   const onChange = useCallback((e) => {
     const { target: { name, value } } = e;
 
@@ -117,9 +127,14 @@ const LoginForm = () => {
   const onSubmit = useCallback((e) => {
     e.preventDefault();
 
-    dispatch(loginAction(email, password));
-
-    navigate("/");
+    if(parsedUser) {
+      const savedUser = JSON.parse(localStorage.getItem("signUpUser"));
+      const havedUser = savedUser.find((v) => (v.email && v.password) === (email && password) );
+      if(havedUser) {
+        dispatch(loginAction(havedUser));
+        navigate("/");
+      }
+    }
   }, [email, password]);
   
   return (
@@ -141,7 +156,7 @@ const LoginForm = () => {
             </div>
             <div>
               <Button type="submit" className="logInButton">로그인</Button>
-              <Link to="signUp">회원가입</Link>
+              <Link to="/signUp">회원가입</Link>
             </div>
           </form>
         </div>
