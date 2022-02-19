@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { addPost } from "../Reducer/post";
+import Loading from "./Loading"; 
 
 const Form = styled.form`
   margin-top: 20px;
@@ -72,6 +73,7 @@ const PostForm = () => {
   const imageInput = useRef();
   const [text, setText] = useState("");
   const { imagePaths } = useSelector((state) => state.post);
+  const { addPostLoading } = useSelector((state) => state.post);
   const { addPostDone } = useSelector((state) => state.post);
   const { user } = useSelector(state => state.user);
 
@@ -106,7 +108,7 @@ const PostForm = () => {
       <div className="buttonWrap">
         {/* <input type="file" accept='image/*' name="file" multiple hidden ref={imageInput} /> */}
         {/* <Button onClick={onClickImageUpLoad} className="imgUpload" type="button">이미지 업로드</Button> */}
-        <WriteButton type="submit" className="rightButton">게시</WriteButton>
+        <WriteButton type="submit" className="rightButton">{ addPostLoading ? <Loading /> : "게시" }</WriteButton>
       </div>
       {/* <div>
         {imagePaths.map((v) => (

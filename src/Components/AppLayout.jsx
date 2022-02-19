@@ -9,6 +9,7 @@ import PostForm from "./PostForm";
 import { LOG_OUT_REQUEST } from "../Reducer/user";
 import { AiOutlineClose } from 'react-icons/ai';
 import { useMediaQuery } from 'react-responsive';
+import Loading from "./Loading";
 
 const Wrapper = styled.div`
   max-width: 1320px;
@@ -148,6 +149,7 @@ const AppLayout = ({ children }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { addPostDone } = useSelector((state) => state.post);
+  const { logOutLoading } = useSelector((state) => state.user);
   const [write, setWrite] = useState(false);
 
   const isTabletOrMobile = useMediaQuery({ maxWidth: 1024 })
@@ -189,7 +191,7 @@ const AppLayout = ({ children }) => {
                   <Link to="/" className="logo">허밍버드</Link>
                 </li>
               </Menu>
-              {user ? <Button className="logOut" onClick={onClickLogOut}>로그아웃</Button> : (
+              {user ? <Button className="logOut" onClick={onClickLogOut}>{ logOutLoading ? <Loading /> : "로그아웃" }</Button> : (
                 <Button className="logIn">
                   <Link to="/login">로그인</Link>
                 </Button>

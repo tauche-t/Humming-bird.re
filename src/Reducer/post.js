@@ -49,6 +49,9 @@ export const initialState = {
   loadPostError: null,
   hasMorePost: true,
   savePosts: [],
+  searchPostLoading: false,
+  searchPostDone: false,
+  searchPostError: null,
 }
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
@@ -71,6 +74,10 @@ export const ADD_COMMENT_TO_ME = 'ADD_COMMENT_TO_ME';
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
 export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
+
+export const SEARCH_POST_REQUEST = 'SEARCH_POST_REQUEST';
+export const SEARCH_POST_SUCCESS = 'SEARCH_POST_SUCCESS';
+export const SEARCH_POST_FAILURE = 'SEARCH_POST_FAILURE';
 
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
@@ -118,6 +125,11 @@ export const generateDummyPost = (number) => Array(number).fill().map((v, i) => 
   }]
 }));
 
+export const searchPostAction = (data) => ({
+  type: SEARCH_POST_REQUEST,
+  data,
+});
+
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -155,11 +167,15 @@ const reducer = (state = initialState, action) => {
         removePostError: null,
       }
     case REMOVE_POST_SUCCESS:
+      const removePost = state.mainPosts.filter((v) => v.id !== action.data);
+      localStorage.setItem("post", JSON.stringify(removePost));
+      const getRemovePost = localStorage.getItem("post");
+      const paresRemovePost = JSON.parse(getRemovePost);
       return {
         ...state,
         removePostLoading: false,
         removePostDone: true,
-        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
+        mainPosts: paresRemovePost,
       }
     case REMOVE_POST_FAILURE:
       return {
@@ -220,6 +236,28 @@ const reducer = (state = initialState, action) => {
         ...state,
         loadPostLoading: false,
         loadPostError: action.error,
+      }
+    case SEARCH_POST_REQUEST: {
+      return {
+        ...state,
+        searchPostLoading: true,
+        searchPostDone: false,
+        searchPostError: null,
+      }
+    }
+    case SEARCH_POST_SUCCESS:
+      return {
+        ...state,
+        searchPostLoading: false,
+        searchPostDone: true,
+        mainPosts: state.mainPosts.filter((v) => v.content === action.data),
+      }
+    
+    case SEARCH_POST_FAILURE:
+      return {
+        ...state,
+        searchPostLoading: false,
+        searchPostError: action.error,
       }
     default:
       return state;

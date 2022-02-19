@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import AppLayout from "../Components/AppLayout";
 import PostCard from "../Components/PostCard";
 import PostForm from "../Components/PostForm";
-import { LOAD_POST_REQUEST } from "../Reducer/post";
+import { LOAD_POST_REQUEST, searchPostAction, SEARCH_POST_REQUEST } from "../Reducer/post";
 import { LOAD_MY_INFO_REQUEST } from "../Reducer/user";
 
 const SearchWrap = styled.div`
@@ -39,6 +39,8 @@ const Home = () => {
 
   const loadMe = JSON.parse(localStorage.getItem("me"));
 
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     dispatch({
       type: LOAD_POST_REQUEST,
@@ -68,11 +70,29 @@ const Home = () => {
     }
   }, []);
 
+  const onChangeSearch = useCallback((e) => {
+    setSearch(e.target.value);
+
+  }, [search]);
+
+  const onSubmitSearch = useCallback((e) => {
+    e.preventDefault();
+
+    dispatch(searchPostAction(search));
+    if(search === '') {
+      dispatch({
+        type: LOAD_POST_REQUEST,
+      });
+    }
+  }, [search]);
+
   return (
     <>
       <AppLayout>
         <SearchWrap>
-          <InputSearch type="search" placeholder="검색" />
+          <form onSubmit={onSubmitSearch}>
+            <InputSearch onChange={onChangeSearch} value={search} type="search" placeholder="검색" />
+          </form>
           <AiOutlineSearch style={{ position: 'absolute', left: '12px', top: '9px', fontSize: '18px'  }} />
         </SearchWrap>
         { user && <PostForm /> }

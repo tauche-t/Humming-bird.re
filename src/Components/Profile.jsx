@@ -225,7 +225,7 @@ const Profile = () => {
 
     <UserInfo>
       <ul>
-        <li>Likes <span>0</span></li>
+        <li>Likes <span>{ user.Liked.length }</span></li>
         <li>게시글 <span>{ user.Posts.length }</span></li>
         <li>댓글 <span>{ user.Comments.length }</span></li>
       </ul>

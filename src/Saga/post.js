@@ -1,6 +1,6 @@
 import { all, delay, fork, put, take, takeLatest } from 'redux-saga/effects';
 import shortid from 'shortid';
-import { ADD_POST_SUCCESS, ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_TO_ME, REMOVE_POST_REQUEST, REMOVE_POST_SUCCESS, REMOVE_POST_FAILURE, REMOVE_POST_OF_ME, ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE, ADD_COMMENT_TO_ME, LOAD_POST_REQUEST, LOAD_POST_SUCCESS, LOAD_POST_FAILURE, generateDummyPost} from "../Reducer/post";
+import { ADD_POST_SUCCESS, ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_TO_ME, REMOVE_POST_REQUEST, REMOVE_POST_SUCCESS, REMOVE_POST_FAILURE, REMOVE_POST_OF_ME, ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE, ADD_COMMENT_TO_ME, LOAD_POST_REQUEST, LOAD_POST_SUCCESS, LOAD_POST_FAILURE, generateDummyPost, SEARCH_POST_REQUEST, SEARCH_POST_SUCCESS, SEARCH_POST_FAILURE} from "../Reducer/post";
 
 function* addPost(action) {
   try {
@@ -83,6 +83,20 @@ function* removePost(action) {
   }
 }
 
+function* searchPost(action) {
+  try {
+    yield put({
+      type: SEARCH_POST_SUCCESS,
+      data: action.data,
+    });
+  } catch (error) {
+    yield put({
+      type: SEARCH_POST_FAILURE,
+      data: error.response.data,
+    });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -99,11 +113,17 @@ function* watchaddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
 
+function* watchSearchPost() {
+  yield takeLatest(SEARCH_POST_REQUEST, searchPost);
+}
+
+
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
     fork(watchLoadPost),
     fork(watchRemovePost),
     fork(watchaddComment),
+    fork(watchSearchPost),
   ]); 
 }

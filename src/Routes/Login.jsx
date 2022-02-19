@@ -4,6 +4,7 @@ import { useMediaQuery } from "react-responsive";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../Components/AppLayout";
+import Loading from "../Components/Loading";
 import { loginAction } from "../Reducer/user";
 
 const BackgroundWrapper = styled.div`
@@ -118,6 +119,8 @@ const LoginForm = () => {
   const isTabletOrMobile = useMediaQuery({ maxWidth: 1024 })
 
   const { parsedUser } = useSelector(state => state.user);
+  const { loginLoading } = useSelector(state => state.user);
+  const { loginDone } = useSelector(state => state.user);
 
   const onChange = useCallback((e) => {
     const { target: { name, value } } = e;
@@ -137,7 +140,13 @@ const LoginForm = () => {
       const havedUser = savedUser.find((v) => (v.email && v.password) === (email && password) );
       if(havedUser) {
         dispatch(loginAction(havedUser));
-        navigate("/");
+        const delayTime = setTimeout(() => {
+          navigate("/");
+        }, 1000);
+
+        if(loginDone) {
+          clearTimeout(delayTime);
+        }
       }
     }
   }, [email, password]);
@@ -154,13 +163,13 @@ const LoginForm = () => {
           <h2>Log In</h2>
           <form onSubmit={onSubmit}>
             <div>
-              <Input name="email" value={email} onChange={onChange} placeholder="이메일" />
+              <Input type="email" name="email" value={email} onChange={onChange} placeholder="이메일" />
             </div>
             <div>
-              <Input name="password" value={password} onChange={onChange} placeholder="비밀번호" />
+              <Input type="password" name="password" value={password} onChange={onChange} placeholder="비밀번호" />
             </div>
             <div>
-              <Button type="submit" className="logInButton">로그인</Button>
+              <Button type="submit" className="logInButton">{ loginLoading ? <Loading /> : "로그인" }</Button>
               <Link to="/signUp" style={{ display: "block", textAlign: "center", marginTop: "20px" }}>회원가입</Link>
             </div>
           </form>

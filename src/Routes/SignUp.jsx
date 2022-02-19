@@ -115,7 +115,7 @@ const SignUp = () => {
           <h1>Sign Up</h1>
           <form onSubmit={onSubmit}>
             <div>
-              <Input name="email" value={email} onChange={onChangeEmail} placeholder="이메일" />
+              <Input type="email" name="email" value={email} onChange={onChangeEmail} placeholder="이메일" />
             </div>
             <div>
               <Input name="nickname" value={nickname} onChange={onChangeNickname} placeholder="닉네임" />

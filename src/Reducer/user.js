@@ -41,6 +41,9 @@ export const NAME_MODIFY_REQUEST = 'NAME_MODIFY_REQUEST';
 export const NAME_MODIFY_SUCCESS = 'NAME_MODIFY_SUCCESS';
 export const NAME_MODIFY_FAILURE = 'NAME_MODIFY_FAILURE';
 
+export const ADD_LIKED_TO_ME = 'ADD_LIKED_TO_ME';
+export const REMOVE_LIKED_OF_ME = 'REMOVE_LIKED_OF_ME';
+
 export const loginAction = (data) => ({
   type: LOG_IN_REQUEST,
   data,
@@ -65,6 +68,7 @@ const reducer = (state = initialState, action) => {
         loginError: null,
       }
     case LOG_IN_SUCCESS:
+      console.log(action.data);
       localStorage.setItem("me", JSON.stringify(dummyUser(action.data)));
       const savedMe = localStorage.getItem("me");
       const parsedMe = JSON.parse(savedMe);
@@ -192,6 +196,22 @@ const reducer = (state = initialState, action) => {
         user: {
           ...state.user,
           Comments: [{ id: action.data }, ...state.user.Comments],
+        }
+      }
+    case ADD_LIKED_TO_ME:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          Liked: [{ id: action.data }, ...state.user.Liked],
+        }
+      }
+    case REMOVE_LIKED_OF_ME:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          Liked: state.user.Liked.filter((v) => v.id !== action.data),
         }
       }
     default:
