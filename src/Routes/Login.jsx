@@ -147,6 +147,8 @@ const LoginForm = () => {
         if(loginDone) {
           clearTimeout(delayTime);
         }
+      }else{
+        alert('회원이 아니시네요! 가입 부탁드립니다~');
       }
     }
   }, [email, password]);

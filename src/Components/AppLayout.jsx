@@ -157,6 +157,8 @@ const AppLayout = ({ children }) => {
   const onClickWrite = useCallback(() => {
     if(user) {
       setWrite(true);
+    }else{
+      alert('로그인 부탁드리겠습니당');
     }
   }, [write, user]);
 

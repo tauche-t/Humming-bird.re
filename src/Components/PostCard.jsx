@@ -58,6 +58,8 @@ const PostCard = ({ post }) => {
 
   const { removePostLoading } = useSelector(state => state.post);
 
+  const { user } = useSelector(state => state.user);
+
   const onClickLiked = useCallback(() => {
     setLiked((prev) => !prev);
   }, []);
@@ -67,10 +69,14 @@ const PostCard = ({ post }) => {
   }, []);
 
   const onRemovePost = useCallback(() => {
-    dispatch({
-      type: REMOVE_POST_REQUEST,
-      data: post.id,
-    });
+    if(user) {
+      dispatch({
+        type: REMOVE_POST_REQUEST,
+        data: post.id,
+      });
+    }else{
+      alert('로그인 해주세요~');
+    }
   }, []);
 
   return (
@@ -97,7 +103,7 @@ const PostCard = ({ post }) => {
       </Card>
       { comment && (
         <div>
-          <CommentForm post={post} />
+          { user ? <CommentForm post={post} /> : null }
           <Comments header={`${post.Comments.length}개의 댓글`} data={post.Comments} />
         </div>
       )}
