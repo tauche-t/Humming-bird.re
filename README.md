@@ -48,3 +48,15 @@ Faker라이브러리를 통해 더미데이터를 생성한 뒤 무한 스크롤
   - App.js
   - index.js
 ```
+
+### 회원가입 및 로그인
+<img src="https://raw.githubusercontent.com/tauche-t/Portfolio/main/img/login.gif" />
+
+### 게시글 작성 및 삭제
+<img src="https://raw.githubusercontent.com/tauche-t/Portfolio/main/img/post.gif" />
+
+### 댓글 작성 및 삭제
+<img src="https://raw.githubusercontent.com/tauche-t/Portfolio/main/img/comment.gif" />
+
+### 인피니티 스크롤
+<img src="https://raw.githubusercontent.com/tauche-t/Portfolio/main/img/scroll.gif" />
